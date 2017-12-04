@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8 />
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/default.css">
+    <link rel="stylesheet" href="css/matrix.css">
+</head>
+<body>
+    <div id="console">
+        <div id="wrapper">
+            <div id="terminal">
+                <div id="stdout"></div>
+                <p>
+                    <span id="prompt">$</span>
+                    <input type="text" id="stdin">
+                </p>
+            </div>
+        </div>  
+    </div>
+    
+    <canvas id="matrix"></canvas>
+    <div id="background"></div>
+    
+    <div id="log"></div>
+
+    <script src="../_vendor/js/jquery.min.js"></script>
+    <!--<script src="js/mock.js"></script>-->
+    <script src="js/commands.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/matrix.js"></script>
+</body>
+</html>
