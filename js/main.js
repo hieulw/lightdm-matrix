@@ -4,9 +4,9 @@ class tty {
         this.history = [];
         this.history_index = 0;
         this.previous = null;
-	this.session = null;
-	this.cache = '';
-	this.setup_cache();
+        this.session = null;
+        this.cache = '';
+        this.setup_cache();
 
         // Set up input handlers and focus
         this.input = document.getElementById('stdin');
@@ -21,10 +21,13 @@ class tty {
 
         // Check logged in user
         this.user = this.utils.arrayOfObjectsHasKeyValue(lightdm.users, 'logged_in', true);
-	if (!this.user) {
-		this.user = this.cache_get('last_user');
-		this.username = this.user.name ? this.user.name : this.cache_get('last_username');
-	}
+        if (!this.user) {
+            this.user = this.cache_get('last_user');
+            if (null === this.user) {
+                this.user = lightdm.users[0];
+            }
+        }
+        this.username = this.user.name ? this.user.name : this.cache_get('last_username');
 
         // Set up output handlers
         this.output = document.getElementById('stdout');
@@ -36,7 +39,7 @@ class tty {
 
 
         // Make sure we always focus the input
-        window.addEventListener('click', function (e) {
+        window.addEventListener('click', function(e) {
             this.input.focus();
         }.bind(this));
 
@@ -48,78 +51,85 @@ class tty {
 
         // Init command handler
         this.commands = new commandHandler(commands, this.utils);
-        
+
         if (this.commands.exists('motd')) {
             this.stdout(this.commands.get('motd').callback());
         }
     }
 
-	setup_cache() {
-		// Do we have access to localStorage?
-		try {
-			localStorage.setItem('testing', 'test');
-			let test = localStorage.getItem('testing');
+    setup_cache() {
+        // Do we have access to localStorage?
+        try {
+            localStorage.setItem('testing', 'test');
+            let test = localStorage.getItem('testing');
 
-			if ('test' === test) {
-				// We have access to localStorage
-				this.cache = 'localStorage';
-			}
-			localStorage.removeItem('testing');
+            if ('test' === test) {
+                // We have access to localStorage
+                this.cache = 'localStorage';
+            }
+            localStorage.removeItem('testing');
 
-		} catch(err) {
-			// We do not have access to localStorage. Fallback to cookies.
-			this.cache = 'Cookies';
-		}
+        }
+        catch (err) {
+            // We do not have access to localStorage. Fallback to cookies.
+            this.cache = 'Cookies';
+        }
 
-		// Just in case...
-		if ('' === this.cache) {
-			this.cache = 'Cookies';
-		}
-	}
+        // Just in case...
+        if ('' === this.cache) {
+            this.cache = 'Cookies';
+        }
+    }
 
-	cache_get() {
-		var key = `ant`, value;
+    cache_get() {
+        var key = `ant`,
+            value;
 
-		for (var _len = arguments.length, key_parts = new Array(_len), _key = 0; _key < _len; _key++) {
-			key_parts[_key] = arguments[_key];
-		}
+        for (var _len = arguments.length, key_parts = new Array(_len), _key = 0; _key < _len; _key++) {
+            key_parts[_key] = arguments[_key];
+        }
 
-		for ( var part of key_parts ) {
-			key += `:${part}`;
-		}
+        for (var part of key_parts) {
+            key += `:${part}`;
+        }
 
-		if ('localStorage' === this.cache) {
-			value = localStorage.getItem(key);
-		} else if ('Cookies' === this.cache) {
-			value = Cookies.get(key);
-		} else {
-			value = null;
-		}
+        if ('localStorage' === this.cache) {
+            value = localStorage.getItem(key);
+        }
+        else if ('Cookies' === this.cache) {
+            value = Cookies.get(key);
+        }
+        else {
+            value = null;
+        }
 
-		return ('undefined' !== typeof(value)) ? value : null;
-	}
+        return ('undefined' !== typeof(value)) ? value : null;
+    }
 
-	cache_set( value ) {
-		var key = `ant`, res;
+    cache_set(value) {
+        var key = `ant`,
+            res;
 
-		for (var _len2 = arguments.length, key_parts = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-			key_parts[_key2 - 1] = arguments[_key2];
-		}
+        for (var _len2 = arguments.length, key_parts = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+            key_parts[_key2 - 1] = arguments[_key2];
+        }
 
-		for ( var part of key_parts ) {
-			key += `:${part}`;
-		}
+        for (var part of key_parts) {
+            key += `:${part}`;
+        }
 
-		if ('localStorage' === this.cache) {
-			res = localStorage.setItem( key, value );
-		} else if ('Cookies' === this.cache) {
-			res = Cookies.set(key, value);
-		} else {
-			res = null;
-		}
+        if ('localStorage' === this.cache) {
+            res = localStorage.setItem(key, value);
+        }
+        else if ('Cookies' === this.cache) {
+            res = Cookies.set(key, value);
+        }
+        else {
+            res = null;
+        }
 
-		return res;
-	}
+        return res;
+    }
 
     call(command) {
         // Add to history
@@ -204,7 +214,7 @@ class tty {
         let keys = this.commands.keys();
         let suggestions = [];
 
-        keys.forEach(function (key) {
+        keys.forEach(function(key) {
             if (key.substr(0, input.length) == input) {
                 suggestions.push(key);
             }
@@ -226,7 +236,7 @@ class tty {
 
             let wrapper = document.getElementById('terminal');
             wrapper.scrollTop = wrapper.scrollHeight;
-            
+
             e.preventDefault();
         }
     }
@@ -260,7 +270,8 @@ class tty {
             }
 
             e.preventDefault();
-        } else if (e.keyCode == 40) { // Key down
+        }
+        else if (e.keyCode == 40) { // Key down
             if (this.history_index >= 1) {
                 this.history_index--;
                 this.set_history();
@@ -271,20 +282,21 @@ class tty {
     }
 
     _authentication_complete() {
-	    if (this.session === null) {
-	        this.session = this.cache_get('last_session');
-	        if (this.session === null) {
-	            this.session = lightdm.sessions[0].key;
-		        this.cache_set(this.session, 'last_session');
-		        this.user.session = this.session;
-           }
+        if (this.session === null) {
+            this.session = this.cache_get('last_session');
+            if (this.session === null) {
+                this.session = lightdm.sessions[0].key;
+                this.cache_set(this.session, 'last_session');
+                this.user.session = this.session;
+            }
         }
         if (lightdm.is_authenticated) {
-	        this.cache_set(this.user, 'last_user');
-		this.cache_set(this.user.name, 'last_username');
+            this.cache_set(this.user, 'last_user');
+            this.cache_set(this.user.name, 'last_username');
             //$('body').fadeOut( 1000, () => lightdm.start_session(this.session));
-            $('body').fadeOut( 1000, () => lightdm.login( lightdm.authentication_user, this.session));
-        } else {
+            $('body').fadeOut(1000, () => lightdm.login(lightdm.authentication_user, this.session));
+        }
+        else {
             this.stderr("incorrect password");
         }
     }
@@ -339,7 +351,8 @@ class utils {
 
         if (value instanceof Array) {
             return value.length === 0;
-        } else if (value.constructor.name == 'object') {
+        }
+        else if (value.constructor.name == 'object') {
             for (var property in value) {
                 if (value.hasOwnProperty(property)) {
                     return false;
@@ -363,7 +376,7 @@ class utils {
     }
 
     arrayOfObjectsHasKeyValue(arrayOfObjects, key, value) {
-        let result = arrayOfObjects.filter(function (obj) {
+        let result = arrayOfObjects.filter(function(obj) {
             return obj[key] == value;
         });
 

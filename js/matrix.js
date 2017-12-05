@@ -21,4 +21,12 @@ var c = document.getElementById("matrix"),
  for (var tamanhoFonte = 13, columns = c.width / tamanhoFonte, letras = [],     x = 0; x < columns; x++) letras[x] = 1;
     setInterval(desenhar, 60),
       
-setTimeout(function() {$(".carregando").addClass("aumentar")}, 300), setTimeout(function() {$(".box-fixo").fadeOut(600)}, 4800), setTimeout(function() {$(".svg-box").addClass("opacidade1")}, 4e3);
+setTimeout(function() {
+    $(".carregando").addClass("aumentar")
+}, 300), 
+setTimeout(function() {
+    $(".box-fixo").fadeOut(600)
+}, 4800),
+setTimeout(function() {
+    $(".svg-box").addClass("opacidade1")
+}, 4e3);

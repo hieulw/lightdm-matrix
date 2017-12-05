@@ -1,15 +1,15 @@
 let commands = {
     login: {
         help: function(args) {
-            return '<br><strong>NAME</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;login<br><br>'+
-            '<strong>SYNOPSIS</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;login [USER]<br><br>'+
-            '<strong>DESCRIPTION</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;Login using the given username.<br><br>';
+            return '<br><strong>NAME</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;login<br><br>' +
+                '<strong>SYNOPSIS</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;login [USER]<br><br>' +
+                '<strong>DESCRIPTION</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;Login using the given username.<br><br>';
         },
 
-        callback: function (args) {            
+        callback: function(args) {
             this.user = this.utils.arrayOfObjectsHasKeyValue(lightdm.users, 'name', args[0]);
 
             if (!this.user) {
@@ -17,52 +17,50 @@ let commands = {
                 return false;
             }
 
-            if(lightdm.in_authentication) {
+            if (lightdm.in_authentication) {
                 lightdm.cancel_authentication();
             }
-            
+
             this.session = this.user.session !== null && this.user.session === this.session ? this.user.session : this.session;
 
-            lightdm.start_authentication(this.user.name);    
+            lightdm.start_authentication(this.user.name);
             return true;
         },
 
         password: function(password, response) {
             if (lightdm.in_authentication) {
-                setTimeout(function(){ 
+                setTimeout(function() {
                     lightdm.respond(password);
                 }, 200);
-    
+
                 return null;
             }
-    
+
             return `call login [user]<br>`;
         }
     },
     passwd: {
         help: function(args) {
-            return '<br><strong>NAME</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;passwd<br><br>'+
-            '<strong>SYNOPSIS</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;passwd<br><br>'+
-            '<strong>DESCRIPTION</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;Login to an existing session.<br><br>';
+            return '<br><strong>NAME</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;passwd<br><br>' +
+                '<strong>SYNOPSIS</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;passwd<br><br>' +
+                '<strong>DESCRIPTION</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;Login to an existing session.<br><br>';
         },
 
-        callback: function (args) {            
-            if (!this.user) {
-		this.user = this.utils.arrayOfObjectsHasKeyValue(lightdm.users, 'logged_in', true);
-	    }
+        callback: function(args) {
+            this.user = this.utils.arrayOfObjectsHasKeyValue(lightdm.users, 'name', this.username);
 
             if (!this.user) {
                 this.stderr(`bash: no sessions exist`);
                 return false;
             }
 
-            if(lightdm.in_authentication) {
+            if (lightdm.in_authentication) {
                 lightdm.cancel_authentication();
             }
-            
+
             this.session = this.user.session !== null ? this.user.session : this.session;
             lightdm.start_authentication(this.user.name);
             return true;
@@ -70,29 +68,29 @@ let commands = {
 
         password: function(password, response) {
             if (lightdm.in_authentication) {
-                setTimeout(function(){ 
+                setTimeout(function() {
                     lightdm.respond(password);
                 }, 200);
-    
+
                 return null;
             }
-    
+
             return `call login [user]<br>`;
         }
     },
     users: {
         help: function(args) {
-            return '<br><strong>NAME</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;users<br><br>'+
-            '<strong>SYNOPSIS</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;users<br><br>'+
-            '<strong>DESCRIPTION</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;List out all available users.<br><br>';
+            return '<br><strong>NAME</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;users<br><br>' +
+                '<strong>SYNOPSIS</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;users<br><br>' +
+                '<strong>DESCRIPTION</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;List out all available users.<br><br>';
         },
 
         callback: function(args) {
             let users = '';
-            
+
             lightdm.users.forEach(function(user) {
                 users += '<span class="stdout-off-white">' + user.name + "</span><br>";
             });
@@ -102,17 +100,17 @@ let commands = {
     },
     ls: {
         help: function(args) {
-            return '<br><strong>NAME</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;ls<br><br>'+
-            '<strong>SYNOPSIS</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;ls<br><br>'+
-            '<strong>DESCRIPTION</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;List out all available sessions.<br><br>';
+            return '<br><strong>NAME</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;ls<br><br>' +
+                '<strong>SYNOPSIS</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;ls<br><br>' +
+                '<strong>DESCRIPTION</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;List out all available sessions.<br><br>';
         },
 
         callback: function(args) {
             sessions = '';
-            
+
             lightdm.sessions.forEach(function(session) {
                 sessions += '<span class="stdout-off-white">' + session.key + "</span><br>";
             });
@@ -122,12 +120,12 @@ let commands = {
     },
     session: {
         help: function(args) {
-            return '<br><strong>NAME</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;session<br><br>'+
-            '<strong>SYNOPSIS</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;session [NAME]<br><br>'+
-            '<strong>DESCRIPTION</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;Set the session to login to.<br><br>';
+            return '<br><strong>NAME</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;session<br><br>' +
+                '<strong>SYNOPSIS</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;session [NAME]<br><br>' +
+                '<strong>DESCRIPTION</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;Set the session to login to.<br><br>';
         },
 
         callback: function(args) {
@@ -141,18 +139,18 @@ let commands = {
             }
 
             this.session = session.key;
-	    this.cache_set(this.session, 'last_session');
+            this.cache_set(this.session, 'last_session');
             return true;
         }
     },
     poweroff: {
         help: function(args) {
-            return '<br><strong>NAME</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;poweroff<br><br>'+
-            '<strong>SYNOPSIS</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;poweroff<br><br>'+
-            '<strong>DESCRIPTION</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;May be used to power off the machine.<br><br>';
+            return '<br><strong>NAME</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;poweroff<br><br>' +
+                '<strong>SYNOPSIS</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;poweroff<br><br>' +
+                '<strong>DESCRIPTION</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;May be used to power off the machine.<br><br>';
         },
 
         callback: function(args) {
@@ -162,12 +160,12 @@ let commands = {
     },
     reboot: {
         help: function(args) {
-            return '<br><strong>NAME</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;reboot<br><br>'+
-            '<strong>SYNOPSIS</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;reboot<br><br>'+
-            '<strong>DESCRIPTION</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;May be used to restart the machine.<br><br>';
+            return '<br><strong>NAME</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;reboot<br><br>' +
+                '<strong>SYNOPSIS</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;reboot<br><br>' +
+                '<strong>DESCRIPTION</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;May be used to restart the machine.<br><br>';
         },
 
         callback: function(args) {
@@ -177,12 +175,12 @@ let commands = {
     },
     suspend: {
         help: function(args) {
-            return '<br><strong>NAME</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;suspend<br><br>'+
-            '<strong>SYNOPSIS</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;suspend<br><br>'+
-            '<strong>DESCRIPTION</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;May be used to suspend the machine.<br><br>';
+            return '<br><strong>NAME</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;suspend<br><br>' +
+                '<strong>SYNOPSIS</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;suspend<br><br>' +
+                '<strong>DESCRIPTION</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;May be used to suspend the machine.<br><br>';
         },
 
         callback: function(args) {
@@ -192,12 +190,12 @@ let commands = {
     },
     clear: {
         help: function(args) {
-            return '<br><strong>NAME</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;clear<br><br>'+
-            '<strong>SYNOPSIS</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;clear<br><br>'+
-            '<strong>DESCRIPTION</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;Clear the terminal screen.<br><br>';
+            return '<br><strong>NAME</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;clear<br><br>' +
+                '<strong>SYNOPSIS</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;clear<br><br>' +
+                '<strong>DESCRIPTION</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;Clear the terminal screen.<br><br>';
         },
 
         callback: function(args) {
@@ -219,12 +217,12 @@ let commands = {
     },
     man: {
         help: function(args) {
-            return '<br><strong>NAME</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;man<br><br>'+
-            '<strong>SYNOPSIS</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;man [COMMAND]<br><br>'+
-            '<strong>DESCRIPTION</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;A refence manual to give information about a specific command.<br><br>';
+            return '<br><strong>NAME</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;man<br><br>' +
+                '<strong>SYNOPSIS</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;man [COMMAND]<br><br>' +
+                '<strong>DESCRIPTION</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;A refence manual to give information about a specific command.<br><br>';
         },
 
         callback: function(args) {
@@ -233,7 +231,7 @@ let commands = {
             let stdout = '';
             let stderr = `<span class="stdout-red">No manual entry for ${stdin}<br>`;
 
-            if(this.utils.isEmpty(stdin)) {
+            if (this.utils.isEmpty(stdin)) {
                 return '<span class="stdout-red">What manual page do you want?</span><br>';
             }
 
@@ -242,7 +240,7 @@ let commands = {
 
             if (this.commands.exists(stdin)) {
                 let command = this.commands.get(stdin);
-                
+
                 if (this.utils.hasProperty(command, 'help')) {
                     stdout += command['help']();
                 }
@@ -250,7 +248,8 @@ let commands = {
                     console.log("man");
                     return stderr;
                 }
-            } else {
+            }
+            else {
                 return stderr;
             }
 
@@ -259,23 +258,23 @@ let commands = {
     },
     motd: {
         help: function(args) {
-            return '<br><strong>NAME</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;motd<br><br>'+
-            '<strong>SYNOPSIS</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;motd<br><br>'+
-            '<strong>DESCRIPTION</strong><br>'+
-            '&nbsp;&nbsp;&nbsp;&nbsp;Display the current motd<br><br>';
+            return '<br><strong>NAME</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;motd<br><br>' +
+                '<strong>SYNOPSIS</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;motd<br><br>' +
+                '<strong>DESCRIPTION</strong><br>' +
+                '&nbsp;&nbsp;&nbsp;&nbsp;Display the current motd<br><br>';
         },
 
         callback: function(args) {
-            return ""+
-	    "  .oooooo.   ooo        ooooo ooooo     ooo    ooooooooooooo ooo        ooooo ooooooooooooo<br>".replace(/\s/g, '&nbsp;')+
-            " d8P'  `Y8b  `88.       .888' `888'     `8'    8'   888   `8 `88.       .888' 8'   888   `8<br>".replace(/\s/g, '&nbsp;')+
-            "888           888b     d'888   888       8          888       888b     d'888       888     <br>".replace(/\s/g, '&nbsp;')+
-            "888           8 Y88. .P  888   888       8          888       8 Y88. .P  888       888     <br>".replace(/\s/g, '&nbsp;')+
-            "888           8  `888'   888   888       8          888       8  `888'   888       888     <br>".replace(/\s/g, '&nbsp;')+
-            "`88b    ooo   8    Y     888   `88.    .8'          888       8    Y     888       888     <br>".replace(/\s/g, '&nbsp;')+
-            " `Y8bood8P'  o8o        o888o    `YbodP'           o888o     o8o        o888o     o888o    <br><br>".replace(/\s/g, '&nbsp;');
+            return "" +
+                "  .oooooo.   ooo        ooooo ooooo     ooo    ooooooooooooo ooo        ooooo ooooooooooooo<br>".replace(/\s/g, '&nbsp;') +
+                " d8P'  `Y8b  `88.       .888' `888'     `8'    8'   888   `8 `88.       .888' 8'   888   `8<br>".replace(/\s/g, '&nbsp;') +
+                "888           888b     d'888   888       8          888       888b     d'888       888     <br>".replace(/\s/g, '&nbsp;') +
+                "888           8 Y88. .P  888   888       8          888       8 Y88. .P  888       888     <br>".replace(/\s/g, '&nbsp;') +
+                "888           8  `888'   888   888       8          888       8  `888'   888       888     <br>".replace(/\s/g, '&nbsp;') +
+                "`88b    ooo   8    Y     888   `88.    .8'          888       8    Y     888       888     <br>".replace(/\s/g, '&nbsp;') +
+                " `Y8bood8P'  o8o        o888o    `YbodP'           o888o     o8o        o888o     o888o    <br><br>".replace(/\s/g, '&nbsp;');
         }
     }
 }
